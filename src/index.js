@@ -6,6 +6,10 @@ const reportCommand = require('./reportCommand');
 const leaderboard = require('./leaderboard');
 require('./keep_alive');
 
+console.log('Starting Discord bot...');
+console.log('TOKEN exists:', !!process.env.TOKEN);
+console.log('GUILD_IDS:', process.env.GUILD_IDS);
+
 const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
