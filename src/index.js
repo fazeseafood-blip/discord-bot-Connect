@@ -1656,7 +1656,24 @@ async function promptNewTicket(message, guild) {
 }
 
 console.log('About to login with token...');
-client.login(process.env.TOKEN).catch(err => {
-  console.error('Failed to login:', err);
-  process.exit(1);
+console.log('Token length:', process.env.TOKEN?.length);
+console.log('Token starts with:', process.env.TOKEN?.substring(0, 10));
+
+client.login(process.env.TOKEN)
+  .then(() => {
+    console.log('Login successful!');
+  })
+  .catch(err => {
+    console.error('Failed to login:', err.message);
+    console.error('Full error:', err);
+    process.exit(1);
+  });
+
+// Add error handlers for the client
+client.on('error', error => {
+  console.error('Client error:', error);
+});
+
+process.on('unhandledRejection', error => {
+  console.error('Unhandled promise rejection:', error);
 });
