@@ -6,9 +6,6 @@ const reportCommand = require('./reportCommand');
 const leaderboard = require('./leaderboard');
 require('./keep_alive');
 
-console.log('Starting Discord bot...');
-console.log('TOKEN exists:', !!process.env.TOKEN);
-console.log('GUILD_IDS:', process.env.GUILD_IDS);
 
 const client = new Client({
   intents: [
@@ -123,7 +120,7 @@ async function registerSlashCommands() {
       }
 
       const commandList = await guild.commands.set(commands);
-      console.log(`Registered ${commandList.size} slash commands in guild ${guild.name}.`);
+      console.log(`Registered ${commandList.size} slash commands.`);
     }
   } catch (error) {
     console.error('Failed to register slash commands:', error);
@@ -1325,16 +1322,13 @@ client.on('messageUpdate', async (oldMessage, newMessage) => {
 });
 
 client.on('channelDelete', async (channel) => {
-  console.log(`Channel deleted: ${channel.id} (${channel.name})`);
   
   // Check if the deleted channel was a ticket
   const ticketInfo = Array.from(activeTickets.values()).find(ticket => ticket.channel === channel.id);
   
   if (ticketInfo) {
-    console.log(`Ticket channel ${channel.id} was manually deleted. Removing from active tickets.`);
     activeTickets.delete(ticketInfo.user);
     await saveTickets();
-    console.log(`Ticket removed and saved. Remaining tickets: ${activeTickets.size}`);
     
     // Optionally notify the user
     try {
@@ -1346,12 +1340,10 @@ client.on('channelDelete', async (channel) => {
         .setTimestamp();
       
       await user.send({ embeds: [closedEmbed] }).catch(console.error);
-      console.log(`Notification sent to user ${ticketInfo.user}`);
     } catch (error) {
       console.error('Error notifying user of manual ticket deletion:', error);
     }
   } else {
-    console.log(`Deleted channel ${channel.id} was not a ticket.`);
   }
 });
 
@@ -1655,13 +1647,9 @@ async function promptNewTicket(message, guild) {
   }
 }
 
-console.log('About to login with token...');
-console.log('Token length:', process.env.TOKEN?.length);
-console.log('Token starts with:', process.env.TOKEN?.substring(0, 10));
 
 client.login(process.env.TOKEN)
   .then(() => {
-    console.log('Login successful!');
   })
   .catch(err => {
     console.error('Failed to login:', err.message);
